@@ -53,6 +53,25 @@ or
 
 Builds a binary `binance-pump-detector` in `bin/`.
 
+## Arguments
+
+`-f`
+
+Configuration file location path
+
+Default: `config.ini`
+
+`-v`
+
+Enable verbose
+
+Default: `false`
+
 ## TODO
 
 - Be able to Long & Short in Binance Futures
+
+## Credits
+
+- [go-ini/ini](https://github.com/go-ini/ini)
+- [adshao/go-binance](https://github.com/adshao/go-binance)
