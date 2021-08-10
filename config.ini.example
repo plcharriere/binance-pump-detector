@@ -1,0 +1,11 @@
+[user]
+apiKey    =
+secretKey =
+
+[ETH/BTC]
+percentChange             = 5
+timeInterval              = 300
+minimumTradeCount         = 500
+buyMarket                 = false
+buyQuantity               = 0.01
+sellLimitPriceMultiplier  = 1.0002

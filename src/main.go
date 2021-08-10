@@ -4,11 +4,9 @@ import (
 	"log"
 	"strings"
 	"time"
-)
 
-var pairs = []string{
-	"ETH/BTC",
-}
+	"gopkg.in/ini.v1"
+)
 
 func main() {
 	log.Print("Binance Pump Detector")
@@ -16,35 +14,75 @@ func main() {
 	var args Args
 	args.Parse()
 
+	cfg, err := ini.Load("config.ini")
+	if err != nil {
+		log.Print(err)
+		return
+	}
+
 	app := NewApp(args)
 
-	user, err := app.CreateUser("", "")
+	user, err := app.CreateUser(cfg.Section("user").Key("apiKey").String(), cfg.Section("user").Key("secretKey").String())
 	if err != nil {
 		log.Panic(err)
 		return
 	}
 
-	for _, symbols := range pairs {
-		go func(symbols string) {
-			ssymbols := strings.Split(symbols, "/")
-			symbols2 := NewSymbols(ssymbols[0], ssymbols[1])
-			pair, err := app.GetOrCreatePair(symbols2)
-			if err != nil {
-				log.Print(err)
-				return
-			}
-			_, err = user.Watch(pair, Pump{
-				PercentChange:            15,
-				TimeInterval:             time.Second * 60,
-				MinimumTradeCount:        1,
-				BuyMarket:                false,
-				BuyQuantity:              0.01,
-				SellLimitPriceMultiplier: 1.0002,
-			})
-			if err != nil {
-				log.Print(err)
-			}
-		}(symbols)
+	for _, section := range cfg.SectionStrings() {
+		if section != "DEFAULT" && section != "user" {
+			go func(section string) {
+				symbolsStrings := strings.Split(section, "/")
+				symbols := NewSymbols(symbolsStrings[0], symbolsStrings[1])
+				pair, err := app.GetOrCreatePair(symbols)
+				if err != nil {
+					log.Print(err)
+					return
+				}
+
+				percentChange, err := cfg.Section(section).Key("percentChange").Float64()
+				if err != nil {
+					log.Print(err)
+					return
+				}
+				timeInterval, err := cfg.Section(section).Key("timeInterval").Int()
+				if err != nil {
+					log.Print(err)
+					return
+				}
+				minimumTradeCount, err := cfg.Section(section).Key("minimumTradeCount").Int()
+				if err != nil {
+					log.Print(err)
+					return
+				}
+				buyMarket, err := cfg.Section(section).Key("buyMarket").Bool()
+				if err != nil {
+					log.Print(err)
+					return
+				}
+				buyQuantity, err := cfg.Section(section).Key("buyQuantity").Float64()
+				if err != nil {
+					log.Print(err)
+					return
+				}
+				sellLimitPriceMultiplier, err := cfg.Section(section).Key("buyQuantity").Float64()
+				if err != nil {
+					log.Print(err)
+					return
+				}
+
+				_, err = user.Watch(pair, Pump{
+					PercentChange:            percentChange,
+					TimeInterval:             time.Second * time.Duration(timeInterval),
+					MinimumTradeCount:        minimumTradeCount,
+					BuyMarket:                buyMarket,
+					BuyQuantity:              buyQuantity,
+					SellLimitPriceMultiplier: sellLimitPriceMultiplier,
+				})
+				if err != nil {
+					log.Print(err)
+				}
+			}(section)
+		}
 	}
 
 	<-app.Context.Done()
