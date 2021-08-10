@@ -46,7 +46,9 @@ func (watch *Watch) goroutine() {
 		case trade := <-watch.subC:
 			change := watch.Pair.Change(watch.Pump.TimeInterval)
 			timeDiff := time.Now().UnixNano()/int64(time.Millisecond) - trade.time
-			log.Printf("%s got traded at %v (%vms ago): %.3f%% change in %v (%v -> %v) [%v -> %v] with %d trades", watch.Pair.Symbols.ToStringSeparated(), trade.price, timeDiff, change.Percent, change.Interval, change.Farthest.price, change.Nearest.price, change.From.Format("15:04:05"), change.To.Format("15:04:05"), change.TradeCount)
+			if watch.Pair.App.Args.Verbose {
+				log.Printf("%s got traded at %v (%vms ago): %.3f%% change in %v (%v -> %v) [%v -> %v] with %d trades", watch.Pair.Symbols.ToStringSeparated(), trade.price, timeDiff, change.Percent, change.Interval, change.Farthest.price, change.Nearest.price, change.From.Format("15:04:05"), change.To.Format("15:04:05"), change.TradeCount)
+			}
 			watch.Change(change)
 		case <-watch.stopC:
 			return
