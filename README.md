@@ -2,7 +2,7 @@
 
 Binance Pump Detector is a program to monitor multiple coins on Binance and detect when a coin gets pumped with defined conditions.
 
-It can open a Buy Market order when a pump is detected and open a Sell Limit order at a desired price after buying.
+It can open a Buy Market order when a pump is detected and open a Sell Limit order at a desired price after buying in Spot trading only.
 
 ## Warnings
 
@@ -29,7 +29,10 @@ timeInterval              = 300     ; Time interval in seconds for percentChange
 minimumTradeCount         = 500     ; Minimum trade count
 buyMarket                 = false   ; Open Buy Market order when pump is detected
 buyQuantity               = 0.01    ; How much quantity to buy
-sellLimitPriceMultiplier  = 1.0002  ; Open Sell Limit order at (price when pump is detected) * sellLimitPriceMultiplier
+sellLimitPriceMultiplier  = 1.0002  ; Open Sell Limit order at (current price) * price multiplier
+
+; [OTHER/COIN]
+; ...
 ```
 
 If Binance keys are not defined, the program will still monitor coins but won't be able to open orders.
@@ -49,3 +52,7 @@ or
 `make build`
 
 Builds a binary `binance-pump-detector` in `bin/`.
+
+## TODO
+
+- Be able to Long & Short in Binance Futures
