@@ -29,7 +29,7 @@ timeInterval              = 300     ; Time interval in seconds for percentChange
 minimumTradeCount         = 500     ; Minimum trade count
 buyMarket                 = false   ; Open Buy Market order when pump is detected
 buyQuantity               = 0.01    ; How much quantity to buy
-sellLimitPriceMultiplier  = 1.0002  ; Open Sell Limit order at (price pump is detected) * sellLimitPriceMultiplier
+sellLimitPriceMultiplier  = 1.0002  ; Open Sell Limit order at (price when pump is detected) * sellLimitPriceMultiplier
 ```
 
 If Binance keys are not defined, the program will still monitor coins but won't be able to open orders.
