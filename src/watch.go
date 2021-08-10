@@ -61,10 +61,10 @@ func (watch *Watch) goroutine() {
 func (watch *Watch) Change(change PairChange) {
 	if change.Percent >= watch.Pump.PercentChange && change.TradeCount >= watch.Pump.MinimumTradeCount {
 		if !watch.Pump.PercentChangeTriggered {
-			log.Print("PUMP DETECTED")
+			log.Printf("[%s] PUMP DETECTED: %.3f%% change in %v (%v -> %v) [%v -> %v] with %d trades", watch.Pair.Symbols.ToStringSeparated(), change.Percent, change.Interval, change.Farthest.price, change.Nearest.price, change.From.Format("15:04:05"), change.To.Format("15:04:05"), change.TradeCount)
 			watch.Pump.PercentChangeTriggered = true
 			if !watch.Pump.BuyOrderPlaced && watch.Pump.BuyMarket {
-				log.Print("Placing MARKET buy order")
+				log.Printf("[%s] Placing Buy MARKET order", watch.Pair.Symbols.ToStringSeparated())
 				buyOrder := watch.User.Client.NewCreateOrderService().
 					Symbol(watch.Pair.Symbols.ToString()).
 					Side(binance.SideTypeBuy).
@@ -75,21 +75,23 @@ func (watch *Watch) Change(change PairChange) {
 					log.Print(err)
 					return
 				}
-				log.Print("Bought ", buyOrderResponse.ExecutedQuantity)
+
 				watch.Pump.BuyOrderPlaced = true
+				log.Printf("[%s] Bought %s @ %s", watch.Pair.Symbols.ToStringSeparated(), buyOrderResponse.ExecutedQuantity, buyOrderResponse.Price)
 
-				log.Println(change.Nearest.price, fmt.Sprintf("%f", change.Nearest.price*watch.Pump.SellLimitPriceMultiplier))
-
-				sellOrder := watch.User.Client.NewCreateOrderService().
-					Symbol(watch.Pair.Symbols.ToString()).
-					Side(binance.SideTypeSell).Type(binance.OrderTypeLimit).
-					TimeInForce(binance.TimeInForceTypeGTC).
-					Price(fmt.Sprintf("%f", change.Nearest.price*watch.Pump.SellLimitPriceMultiplier)).
-					Quantity(buyOrderResponse.ExecutedQuantity)
-				_, err = sellOrder.Do(context.Background())
-				if err != nil {
-					log.Print(err)
-					return
+				if watch.Pump.SellLimitPriceMultiplier > 0 {
+					log.Printf("[%s] Placing Sell LIMIT order of %s @ %s", watch.Pair.Symbols.ToStringSeparated(), buyOrderResponse.ExecutedQuantity, fmt.Sprintf("%f", change.Nearest.price*watch.Pump.SellLimitPriceMultiplier))
+					sellOrder := watch.User.Client.NewCreateOrderService().
+						Symbol(watch.Pair.Symbols.ToString()).
+						Side(binance.SideTypeSell).Type(binance.OrderTypeLimit).
+						TimeInForce(binance.TimeInForceTypeGTC).
+						Price(fmt.Sprintf("%f", change.Nearest.price*watch.Pump.SellLimitPriceMultiplier)).
+						Quantity(buyOrderResponse.ExecutedQuantity)
+					_, err = sellOrder.Do(context.Background())
+					if err != nil {
+						log.Print(err)
+						return
+					}
 				}
 			}
 		}
