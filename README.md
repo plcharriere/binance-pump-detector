@@ -6,4 +6,18 @@ It can open a Buy Market order when a pump is detected and open a Sell Limit ord
 
 ## Warnings
 
-**DO NOT USE THIS PROGRAM IF YOU DO NOT KNOW EXACTLY WHAT YOU ARE DOING.** I am not responsible for any loss.
+**DO NOT USE THIS PROGRAM IF YOU DO NOT KNOW EXACTLY WHAT YOU ARE DOING.**
+
+I am not responsible for any loss.
+
+## Run
+
+`make run`
+
+Runs without building a binary with `-race` flag.
+
+## Build
+
+`make build`
+
+Builds a binary `binance-pump-detector` in `bin/`.
