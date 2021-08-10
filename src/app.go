@@ -6,6 +6,8 @@ import (
 )
 
 type App struct {
+	Args Args
+
 	Pairs  Pairs
 	PairsM sync.RWMutex
 
@@ -15,8 +17,9 @@ type App struct {
 	Context context.Context
 }
 
-func NewApp() *App {
+func NewApp(args Args) *App {
 	return &App{
+		Args:    args,
 		Context: context.Context(context.Background()),
 	}
 }

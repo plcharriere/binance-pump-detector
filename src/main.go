@@ -13,7 +13,10 @@ var pairs = []string{
 func main() {
 	log.Print("Binance Pump Detector")
 
-	app := NewApp()
+	var args Args
+	args.Parse()
+
+	app := NewApp(args)
 
 	user, err := app.CreateUser("", "")
 	if err != nil {
