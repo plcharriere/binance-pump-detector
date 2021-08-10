@@ -10,6 +10,30 @@ It can open a Buy Market order when a pump is detected and open a Sell Limit ord
 
 I am not responsible for any loss.
 
+## Configuration
+
+Create a configuration file with :
+
+`cp config.ini.example config.ini`
+
+Configure your `config.ini` file with your Binance Api Key and Secret Key *(optional)* and coins you want to monitor.
+
+```ini
+[user]
+apiKey    = ; Your Binance Api Key (optional)
+secretKey = ; Your Binance Secret Key (optional)
+
+[ETH/BTC]
+percentChange             = 5       ; How much percent change in timeInterval
+timeInterval              = 300     ; Time interval in seconds for percentChange
+minimumTradeCount         = 500     ; Minimum trade count
+buyMarket                 = false   ; Open Buy Market order when pump is detected
+buyQuantity               = 0.01    ; How much quantity to buy
+sellLimitPriceMultiplier  = 1.0002  ; Open Sell Limit order at (price pump is detected) * sellLimitPriceMultiplier
+```
+
+If Binance keys are not defined, the program will still monitor coins but won't be able to open orders.
+
 ## Run
 
 `make run`
@@ -17,6 +41,10 @@ I am not responsible for any loss.
 Runs without building a binary with `-race` flag.
 
 ## Build
+
+`make`
+
+or
 
 `make build`
 
