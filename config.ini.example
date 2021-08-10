@@ -1,11 +1,14 @@
 [user]
-apiKey    =
-secretKey =
+apiKey    = ; Your Binance Api Key (optional)
+secretKey = ; Your Binance Secret Key (optional)
 
 [ETH/BTC]
-percentChange             = 5
-timeInterval              = 300
-minimumTradeCount         = 500
-buyMarket                 = false
-buyQuantity               = 0.01
-sellLimitPriceMultiplier  = 1.0002
+percentChange             = 5       ; How much percent change in timeInterval
+timeInterval              = 300     ; Time interval in seconds for percentChange
+minimumTradeCount         = 500     ; Minimum trade count
+buyMarket                 = false   ; Open Buy Market order when pump is detected
+buyQuantity               = 0.01    ; How much quantity to buy
+sellLimitPriceMultiplier  = 1.0002  ; Open Sell Limit order at (current price) * price multiplier
+
+; [OTHER/COIN]
+; ...
