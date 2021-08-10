@@ -11,16 +11,13 @@ import (
 func main() {
 	log.Print("Binance Pump Detector")
 
-	var args Args
-	args.Parse()
+	app := NewApp()
 
-	cfg, err := ini.Load("config.ini")
+	cfg, err := ini.Load(app.Args.ConfigFilePath)
 	if err != nil {
 		log.Print(err)
 		return
 	}
-
-	app := NewApp(args)
 
 	user, err := app.CreateUser(cfg.Section("user").Key("apiKey").String(), cfg.Section("user").Key("secretKey").String())
 	if err != nil {

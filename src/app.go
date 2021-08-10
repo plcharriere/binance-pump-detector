@@ -17,7 +17,10 @@ type App struct {
 	Context context.Context
 }
 
-func NewApp(args Args) *App {
+func NewApp() *App {
+	var args Args
+	args.Parse()
+
 	return &App{
 		Args:    args,
 		Context: context.Context(context.Background()),
