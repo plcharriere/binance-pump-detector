@@ -59,9 +59,13 @@ func (watch *Watch) goroutine() {
 }
 
 func (watch *Watch) Change(change PairChange) {
-	if change.Percent >= watch.Pump.PercentChange && change.TradeCount >= watch.Pump.MinimumTradeCount {
+	if ((watch.Pump.PercentChange < 0 && change.Percent <= watch.Pump.PercentChange) || (watch.Pump.PercentChange > 0 && change.Percent >= watch.Pump.PercentChange)) && change.TradeCount >= watch.Pump.MinimumTradeCount {
 		if !watch.Pump.PercentChangeTriggered {
-			log.Printf("[%s] PUMP DETECTED: %.3f%% change in %v (%v -> %v) [%v -> %v] with %d trades", watch.Pair.Symbols.ToStringSeparated(), change.Percent, change.Interval, change.Farthest.price, change.Nearest.price, change.From.Format("15:04:05"), change.To.Format("15:04:05"), change.TradeCount)
+			changeType := "PUMP"
+			if change.Percent < 0 {
+				changeType = "DUMP"
+			}
+			log.Printf("[%s] %s DETECTED: %.3f%% change in %v (%v -> %v) [%v -> %v] with %d trades", watch.Pair.Symbols.ToStringSeparated(), changeType, change.Percent, change.Interval, change.Farthest.price, change.Nearest.price, change.From.Format("15:04:05"), change.To.Format("15:04:05"), change.TradeCount)
 			watch.Pump.PercentChangeTriggered = true
 			if !watch.Pump.BuyOrderPlaced && watch.Pump.BuyMarket {
 				log.Printf("[%s] Placing Buy MARKET order", watch.Pair.Symbols.ToStringSeparated())
